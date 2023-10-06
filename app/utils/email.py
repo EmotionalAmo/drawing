@@ -1,18 +1,18 @@
 from email.mime.multipart import MIMEMultipart
-from app.db.redis import mail_redis_client
 from email.mime.text import MIMEText
+from random import choice
+from redis import Redis
 import smtplib
-import random
 import string
 
 
 # 生成验证令牌并存储到Redis
-def generate(email):
+def generate_email_token(email, redis: Redis):
     token = ''.join(
-        random.choice(string.ascii_letters + string.digits) for _ in range(6)
+        choice(string.ascii_letters + string.digits) for _ in range(6)
     )
     key = f'{email}'
-    mail_redis_client.setex(key, 300, token)  # 令牌将在5分钟后过期
+    redis.get.setex(key, 300, token)  # 令牌将在5分钟后过期
     return token
 
 

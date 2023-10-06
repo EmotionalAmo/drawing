@@ -1,14 +1,13 @@
-from sqlalchemy import Column, String, Integer, Float, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, Float
 from pydantic import BaseModel, EmailStr
+from sqlalchemy_utils import UUIDType
+
 from app.db.database import Base
-import uuid
 
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(
-        String(36), primary_key=True, unique=True, default=str(uuid.uuid4())
-    )
+    id = Column(UUIDType(binary=False), primary_key=True, unique=True)
     email = Column(String(100), index=True)
     verify = Column(Boolean, default=False)
     username = Column(String(50), unique=True, index=True)
@@ -26,3 +25,26 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+
+class UserLoginResponse(BaseModel):
+    token: str
+    message: str
+
+
+class UserLogout(BaseModel):
+    username: str
+    token: str
+
+
+class EmailVerifyRequest(BaseModel):
+    email: EmailStr
+
+
+class EmailVerifyResponse(BaseModel):
+    message: str
+
+
+class EmailVerify(BaseModel):
+    email: EmailStr
+    token: str

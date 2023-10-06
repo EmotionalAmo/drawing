@@ -1,6 +1,18 @@
-import redis
+from redis import Redis, ConnectionPool
 
-# 连接到Redis服务器
-mail_redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+pool = ConnectionPool(host="127.0.0.1", db=0)
 
-live_redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)
+
+def get_redis():
+    db = Redis(
+        connection_pool=pool,
+        decode_responses=True
+    )
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def close(self):
+    pool.disconnect()
